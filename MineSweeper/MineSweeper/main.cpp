@@ -2,8 +2,11 @@
 #include <graphics.h>
 #define ROW 3
 #define COL 3
+#define CMINE 1
 int SHOW[ROW][COL] = { 0 };
 int MINE[ROW][COL] = { 0 };
+int COUNT = 0;
+int FLAG = 0;
 int Number(int x, int y,int row, int col);
 void Answer();
 void drawNumber(int x, int y, int a);
@@ -109,3 +112,55 @@ int Number(int x, int y,int row, int col) {
 	}
 	return count;
 }
+
+void Random(int row, int col) {
+	int x = 0, y = 0;
+	for (int i = 0; i < CMINE; i++) {
+		x = rand() % (row + 1); //在0到ROW-1的范围内抽取随机数
+		y = rand() % (col + 1);
+		if (MINE[x][y] == 0) { //检查是否随机数是否与之前相同，若随机数抽中坐标为0，则该处与之前不重复
+			MINE[x][y] = 1;
+		}
+		else {
+			i--;
+		}
+	}
+}
+
+void Safe(int x, int y, int row, int col) {
+	int i = 0, j = 0;
+	if (MINE[x][y] == 1) {
+		MINE[x][y] = 0;
+		while (1) {
+			i = rand() % (row + 1); //在0到ROW-1的范围内抽取随机数
+			j = rand() % (col + 1);
+			if (MINE[i][j] == 0) {
+				MINE[i][j] = 1;
+				break;
+			}
+		}
+	}
+}
+
+int Result(int row, int col) {
+	int correct = 0;
+	if (FLAG == 0) {
+		for (int i = 0; i < row; i++) {
+			for (int j = 0; j < col; j++) {
+				if (SHOW[i][j] == 2) {
+					if (MINE[i][j] == 1) {
+						correct++;
+					}
+				}
+			}
+		}
+		if (correct == CMINE) {
+			return 1;
+		}
+		else if (COUNT == CMINE) {
+			return 1;
+		}
+		else return 0;
+	}
+}
+
